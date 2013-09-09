@@ -12,7 +12,7 @@ Here's a demo video wherein we send some OSC messages to an example Chuck script
 
 To play with the demo you will have to do several steps after cloning this repo.
 
-1) Install Chuck and put it on your `$PATH`
+1) Install Chuck and put it on your `$PATH`<br>
 2) Cd to the repo directory and run the chuck script.
 
 	# NOTES:

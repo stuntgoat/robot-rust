@@ -15,22 +15,20 @@ var relMouseCoords = function(event){
 };
 
 
-// send the OSC message
+// send the OSC message. This is for the demo which expects an integer and a float for
+// controlling an oscillator and a reverb filter
 function sendOCSCoords(coords) {
     var m = new OSCMessage();
     m.address = "/biggie";
     m.addInt(coords.x);
-    m.addFloat(coords.y / 100);
+    m.addFloat(coords.y / 100); // should always be < 1
     w.send(m.getString());
     console.log('coords from sendOCSCoords', coords);
 }
 
 
-var paper = Raphael(0, 0, "100%", "100%");
 
-var INSTRUMENTS = [];
-
-// distBetween
+// distance between 2 points in 2D.
 var distBetween = function(x1, y1, x2, y2) {
     var dx = Math.abs(x1 - x2);
     var dy = Math.abs(y1 - y2);
@@ -50,6 +48,8 @@ var relPosition = function(mX, mY, ex, ey, r) {
 var cDetect = function(event) {
     var _x = event.offsetX;
     var _y = event.offsetY;
+
+    // iterate over each shape
     for (i in INSTRUMENTS) {
         var radius = INSTRUMENTS[i].attrs.r;
 
@@ -58,6 +58,7 @@ var cDetect = function(event) {
         var id = INSTRUMENTS[i].node.id;
         var center = {'x': x, 'y': y};
         var dist = distBetween(_x, _y, x, y);
+
         if ( dist <= radius) {
             var pos = relPosition(_x, _y, center.x, center.y, radius);
             sendOCSCoords(pos);
@@ -66,12 +67,13 @@ var cDetect = function(event) {
 };
 
 
-
+var paper = Raphael(0, 0, "100%", "100%");
 paper.canvas.onmousemove = cDetect;
 
-loc = 20;
-c1 = 100;
-c2 = 100;
+var INSTRUMENTS = [];
+var loc = 20;
+var c1 = 100;
+var c2 = 100;
 function createInstrument() {
     var a = paper.circle(c1, c2, 50).attr({fill: "hsb(0, 1, 1)", stroke: "none", opacity: .5});
 
@@ -109,6 +111,8 @@ function addSendCoordListener(rElem) {
     return rElem;
 };
 
+
+// create an arbitrary number of circles
 var START = function () {
     for (var i=0; i < 3; i++) {
         var e = addSendCoordListener(createInstrument());

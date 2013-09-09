@@ -3,11 +3,10 @@
 
 This is a collection of scripts that is used for creating arbitrary user interfaces for sending OSC data. Currently we can overlap shapes to send data for each shape when the mouse is over 2 or more shapes at the same time.
 
-This project is using code from the following projects:
-
-    [http://raphaeljs.com/](http://raphaeljs.com/)
-    [https://github.com/aturley/jsox](https://github.com/aturley/jsox)
-    [http://chuck.cs.princeton.edu/doc/examples/osc/r.ck](http://chuck.cs.princeton.edu/doc/examples/osc/r.ck)
+This project is using code from the following projects:<br>
+[http://raphaeljs.com/](http://raphaeljs.com/)<br>
+[https://github.com/aturley/jsox](https://github.com/aturley/jsox)<br>
+[http://chuck.cs.princeton.edu/doc/examples/osc/r.ck](http://chuck.cs.princeton.edu/doc/examples/osc/r.ck)<br><br>
 
 Here's a demo video wherein we send some OSC messages to an example Chuck script that has a reverb filter and an oscillator that are listening for OSC messages to change their settings: [https://www.dropbox.com/s/h7a4sskjd7zojx8/circles_demo.mov](https://www.dropbox.com/s/h7a4sskjd7zojx8/circles_demo.mov)
 

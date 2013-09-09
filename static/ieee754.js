@@ -1,3 +1,5 @@
+// This file belongs to https://github.com/aturley/jsox
+
 var ieee754 = {
  log2: Math.log(2),
  floatToBytes: function (n) {

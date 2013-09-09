@@ -1,3 +1,5 @@
+// This file belongs to https://github.com/aturley/jsox
+
 var OSCArg = function (v) {
   this.value = v;
 };
@@ -61,7 +63,7 @@ OSCIntArg.prototype.getString = function() {
 
 OSCIntArg.prototype.setFromBytes = function(b) {
   this.value = ((b[0] & 0x7F) << 24) | (b[1] << 16) | (b[2] << 8) | b[3];
-  // If the high bit is set then the number is 
+  // If the high bit is set then the number is
   if ((b[0] & 0x80) != 0) {
     this.value = -(0x80000000) + this.value;
   }
@@ -84,7 +86,7 @@ OSCStringArg.prototype.getType = function() {
 
 OSCStringArg.prototype.getString = function() {
     var padding = ["\x00\x00\x00\x00", "\x00\x00\x00", "\x00\x00", "\x00"];
-    
+
     var byteString = this.value + padding[this.value.length % 4];
     var byteArray = new Uint8Array(byteString.length);
     for (var i = 0; i < byteString.length; i++) {
@@ -117,7 +119,7 @@ OSCMessage.prototype.parseString = function (s) {
   var addressEnd = remainder.indexOf("\x00");
   this.address = remainder.substr(0, addressEnd);
   // Chop off the left side of the string up to the argument type list.
-  // This can be done by rounding the addressEnd up to the next multiple 
+  // This can be done by rounding the addressEnd up to the next multiple
   // of 4 and removing that many characters from the left. I'm not sure if
   // bitwise operations are the best thing here, but I'm hoping it's marginally
   // faster than rounding.
@@ -308,4 +310,3 @@ OSCReceiver.prototype.toJSON = function () {
     this.JSON = JSON.stringify({'address': this.address,
                                 'args': this.oscArgs});
 };
-

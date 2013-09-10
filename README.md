@@ -10,6 +10,10 @@ This project is using code from the following projects:<br>
 
 Here's a demo video wherein we send some OSC messages to an example Chuck script that has a reverb filter and an oscillator that are listening for OSC messages to change their settings: [https://www.dropbox.com/s/h7a4sskjd7zojx8/circles_demo.mov](https://www.dropbox.com/s/h7a4sskjd7zojx8/circles_demo.mov)
 
+
+Here's a demo video wherein there are a pair of independent oscillators per circle instrument:
+[https://www.dropbox.com/s/ftf6k8dcz767uwx/circles_demo_independent_pairs.mov](https://www.dropbox.com/s/ftf6k8dcz767uwx/circles_demo_independent_pairs.mov)
+
 `Demo` (requires Mac OS)
 ========================
 

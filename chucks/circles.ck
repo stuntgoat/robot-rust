@@ -1,35 +1,48 @@
 // Copied from http://chuck.cs.princeton.edu/doc/examples/osc/r.ck
 
-// the patch
-SinOsc s => JCRev r => dac;
-.5 => s.gain;
-.1 => r.mix;
-
-// create our OSC receiver
-OscRecv recv;
-// use port 6449 (or whatever)
-6449 => recv.port;
-// start listening (launch thread)
-recv.listen();
-
-// create an address in the receiver, store in new variable
-recv.event( "/biggie, i f" ) @=> OscEvent @ oe;
-
-// infinite event loop
-while( true )
+fun OscRecv circleReceiver(int port)
 {
-    // wait for event to arrive
-    oe => now;
+  OscRecv recv;
+  // use port 6449 (or whatever)
+  port => recv.port;
+  return recv;
+}
 
-    // grab the next message from the queue.
-    while( oe.nextMsg() )
+
+fun void SinOsc_listen_i_i(OscRecv receiver, string address)
+{
+  // start listening (launch thread)
+  receiver.listen();
+  receiver.event(<<< address >>>) @=> OscEvent @ oe;
+  SinOsc ugenX => dac;
+  .2 => ugenX.gain;
+
+  SinOsc ugenY => dac;
+  .2 => ugenY.gain;
+
+  // infinite event loop
+  while (true)
     {
-      int i;
-      float f;
+      // wait for event to arrive
+      oe => now;
 
-        // getFloat fetches the expected float (as indicated by "i f")
-        oe.getInt() => i => Std.mtof => s.freq;
-        oe.getFloat() => f => s.gain;
-        //        <<< "got (via OSC):", i, f >>>;
+      // grab the next message from the queue.
+      while (oe.nextMsg())
+        {
+          int x;
+          int y;
+          // gets the data in the order specified by the receive event
+          oe.getInt() => x => Std.mtof => ugenX.freq;
+          oe.getInt() => y => Std.mtof => ugenY.freq;
+        }
     }
 }
+
+
+circleReceiver(6449) @=> OscRecv r;
+
+spork ~ SinOsc_listen_i_i(r, "/biggie, i i");
+spork ~ SinOsc_listen_i_i(r, "/beyonce, i i");
+spork ~ SinOsc_listen_i_i(r, "/smalls, i i");
+
+while (true) {1::second => now;}

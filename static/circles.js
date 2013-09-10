@@ -17,16 +17,14 @@ var relMouseCoords = function(event){
 
 // send the OSC message. This is for the demo which expects an integer and a float for
 // controlling an oscillator and a reverb filter
-function sendOCSCoords(coords) {
+function sendOCSCoords(coords, address) {
     var m = new OSCMessage();
-    m.address = "/biggie";
+    m.address = "/" + address;
     m.addInt(coords.x);
-    m.addFloat(coords.y / 100); // should always be < 1
+    m.addInt(coords.y); // should always be < 1
     w.send(m.getString());
     console.log('coords from sendOCSCoords', coords);
 }
-
-
 
 // distance between 2 points in 2D.
 var distBetween = function(x1, y1, x2, y2) {
@@ -61,7 +59,7 @@ var cDetect = function(event) {
 
         if ( dist <= radius) {
             var pos = relPosition(_x, _y, center.x, center.y, radius);
-            sendOCSCoords(pos);
+            sendOCSCoords(pos, id);
         };
     };
 };
@@ -71,31 +69,32 @@ var paper = Raphael(0, 0, "100%", "100%");
 paper.canvas.onmousemove = cDetect;
 
 var INSTRUMENTS = [];
-var loc = 20;
-var c1 = 100;
-var c2 = 100;
-function createInstrument() {
-    var a = paper.circle(c1, c2, 50).attr({fill: "hsb(0, 1, 1)", stroke: "none", opacity: .5});
+
+// creates a circle and
+function createCircle(radius) {
+    var c1 = 100;
+    var c2 = 100;
+    var a = paper.circle(c1, c2, radius).attr({fill: "hsb(0, 1, 1)", stroke: "none", opacity: .5});
 
     c1 += 40;
     c2 += 40;
     return a;
 };
 
+var NODES = ['biggie', 'smalls', 'beyonce'];
+
+// adds Raphael specific attributes to the raphael element
 var ID = 0;
 function addSendCoordListener(rElem) {
     rElem.attr("fill", "#f04");
-    rElem.node.id = 'elem' + ID;
-
+    rElem.node.id = NODES[ID];
     ID += 1;
-
     var RADIUS = 50;
     rElem.radius = RADIUS;
     var start = function () {
         this.ox = this.attr("cx");
         this.oy = this.attr("cy");
         this.animate({r: RADIUS, opacity: .25}, 500, ">");
-
     };
 
     var move = function (dx, dy) {
@@ -112,10 +111,10 @@ function addSendCoordListener(rElem) {
 };
 
 
-// create an arbitrary number of circles
+// create an arbitrary number of circles for this demo
 var START = function () {
     for (var i=0; i < 3; i++) {
-        var e = addSendCoordListener(createInstrument());
+        var e = addSendCoordListener(createCircle(50));
         INSTRUMENTS.push(e);
     }
 };

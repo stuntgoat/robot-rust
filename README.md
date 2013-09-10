@@ -10,6 +10,9 @@ This project is using code from the following projects:<br>
 
 Here's a demo video wherein we send some OSC messages to an example Chuck script that has a reverb filter and an oscillator that are listening for OSC messages to change their settings: [https://www.dropbox.com/s/h7a4sskjd7zojx8/circles_demo.mov](https://www.dropbox.com/s/h7a4sskjd7zojx8/circles_demo.mov)
 
+`Demo` (requires Mac OS)
+========================
+
 To play with the demo you will have to do several steps after cloning this repo.
 
 1) Install Chuck and put it on your `$PATH`<br>

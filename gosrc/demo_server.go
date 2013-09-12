@@ -3,6 +3,7 @@
 package main
 
 import (
+	// "fmt"
 	"log"
 	"net"
 	"net/http"
@@ -28,13 +29,14 @@ func ChuckForwarder(ws *websocket.Conn) {
 		}
 
 		// forward data to OSC socket
+		// fmt.Println("string(buf)", string(buf))
 		_, err = l.Write(buf)
 	}
 }
 
-func main() {
 
-	http.Handle("/circles", websocket.Handler(ChuckForwarder))
+func main() {
+	http.Handle("/ws", websocket.Handler(ChuckForwarder))
 	http.Handle("/", http.FileServer(http.Dir("static")))
 	err := http.ListenAndServe(":9000", nil)
 	if err != nil {

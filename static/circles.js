@@ -1,6 +1,15 @@
 // the circles channel
-var w = new WebSocket("ws://127.0.0.1:9000/circles");
-
+var w = new WebSocket("ws://127.0.0.1:9000/ws");
+var chuckMakeInst = function(instrument, id) {
+    var m = new OSCMessage();
+    m.address = "/control";
+    m.addInt(2); // how many floats
+    m.addInt(0); // how many ints
+    m.addInt(0); // how many strings
+    m.addString(instrument);
+    m.addString("/" + id);
+    w.send(m.getString());
+};
 
 // send the relative coordinates from the bounding box
 var relMouseCoords = function(event){
@@ -20,10 +29,10 @@ var relMouseCoords = function(event){
 function sendOCSCoords(coords, address) {
     var m = new OSCMessage();
     m.address = "/" + address;
-    m.addInt(coords.x);
-    m.addInt(coords.y); // should always be < 1
+    m.addFloat(coords.x * 10);
+    m.addFloat(coords.y); // should always be < 1
     w.send(m.getString());
-    console.log('coords from sendOCSCoords', coords);
+    console.log(m.address, coords);
 }
 
 // distance between 2 points in 2D.
@@ -81,15 +90,13 @@ function createCircle(radius) {
     return a;
 };
 
-var NODES = ['biggie', 'smalls', 'beyonce'];
-
 // adds Raphael specific attributes to the raphael element
 var ID = 0;
 function addSendCoordListener(rElem) {
     rElem.attr("fill", "#f04");
-    rElem.node.id = NODES[ID];
+    rElem.node.id = "" + ID;
     ID += 1;
-    var RADIUS = 50;
+    var RADIUS = 100;
     rElem.radius = RADIUS;
     var start = function () {
         this.ox = this.attr("cx");
@@ -111,10 +118,19 @@ function addSendCoordListener(rElem) {
 };
 
 
+var is = [];
 // create an arbitrary number of circles for this demo
 var START = function () {
-    for (var i=0; i < 3; i++) {
-        var e = addSendCoordListener(createCircle(50));
-        INSTRUMENTS.push(e);
+    if (w.readyState == 1) {
+        for (var i=0; i < 3; i++) {
+            var e = addSendCoordListener(createCircle(100));
+            INSTRUMENTS.push(e);
+            if (w.readyState == 1){
+                chuckMakeInst("SinOsc", e.node.id);
+            };
+
+        }
     }
 };
+
+// send a message to Chuck to create an instrument with this id

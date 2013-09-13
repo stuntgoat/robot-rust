@@ -1,9 +1,11 @@
-// listen on a websocket for osc messages and forward the data to a UDP socket
+// - listen on a websocket for osc messages and forward the data to a UDP socket
+// - host static files via HTTP
 
 package main
 
 import (
 	// "fmt"
+	"io"
 	"log"
 	"net"
 	"net/http"
@@ -12,25 +14,34 @@ import (
 )
 
 func ChuckForwarder(ws *websocket.Conn) {
+	defer func() {
+        if r := recover(); r != nil {
+            log.Println(r)
+        }
+    }()
+
 	var buf []byte
 	serverAddr, err := net.ResolveUDPAddr("udp", ":6449")
 
-	l, err := net.DialUDP("udp", nil, serverAddr)
+	chuck, err := net.DialUDP("udp", nil, serverAddr)
 
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer l.Close()
+	defer chuck.Close()
 
 	for {
 		err := websocket.Message.Receive(ws, &buf)
 		if err != nil {
-			panic("Message.Receive: " + err.Error())
+			if err == io.EOF {
+				panic("websocket connection closed")
+			} else {
+				panic("websocket.Message.Receive: " + err.Error())
+			}
 		}
 
 		// forward data to OSC socket
-		// fmt.Println("string(buf)", string(buf))
-		_, err = l.Write(buf)
+		_, err = chuck.Write(buf)
 	}
 }
 

@@ -29,7 +29,7 @@ fun string BuildOSCAddress(string path, int floats, int ints, int strings)
   return OSCAddress;
 }
 
-
+// TODO: - add max, min, gain,
 fun void SinOsc_listen_f_f(OscRecv receiver, string address)
 {
   BuildOSCAddress(address, 2, 0, 0) => string OSCAddress;

@@ -1,3 +1,5 @@
+var LOGGING = false;
+
 // the circles channel
 var w = new WebSocket("ws://127.0.0.1:9000/ws");
 var chuckMakeInst = function(instrument, id) {
@@ -11,28 +13,17 @@ var chuckMakeInst = function(instrument, id) {
     w.send(m.getString());
 };
 
-// send the relative coordinates from the bounding box
-var relMouseCoords = function(event){
-    console.log('target', event.target);
-    var X = event.target.cx.baseVal.value;
-    var Y = event.target.cy.baseVal.value;
-    var R = event.target.r.baseVal.value;
-    if (event.offsetX !== undefined && event.offsetY !== undefined) {
-        return {x:event.offsetX - X + R, y:event.offsetY - Y + R};
-    }
-    return {};
-};
-
-
 // send the OSC message. This is for the demo which expects an integer and a float for
 // controlling an oscillator and a reverb filter
 function sendOCSCoords(coords, address) {
     var m = new OSCMessage();
     m.address = "/" + address;
-    m.addFloat(coords.x * 10);
-    m.addFloat(coords.y); // should always be < 1
+    m.addFloat(coords.x * 2.1);
+    m.addFloat(coords.y * 2.6); // should always be < 1
     w.send(m.getString());
-    console.log(m.address, coords);
+    if (LOGGING) {
+        console.log(m.address, coords);
+    };
 }
 
 // distance between 2 points in 2D.
@@ -83,21 +74,15 @@ var INSTRUMENTS = [];
 function createCircle(radius) {
     var c1 = 100;
     var c2 = 100;
-    var a = paper.circle(c1, c2, radius).attr({fill: "hsb(0, 1, 1)", stroke: "none", opacity: .5});
+    var rElem = paper.circle(c1, c2, radius).attr({fill: "hsb(0, 1, 1)", stroke: "none", opacity: .5});
+    rElem.attr("fill", "#504");
 
-    c1 += 40;
-    c2 += 40;
-    return a;
-};
-
-// adds Raphael specific attributes to the raphael element
-var ID = 0;
-function addSendCoordListener(rElem) {
-    rElem.attr("fill", "#f04");
+    var RADIUS = 100;
     rElem.node.id = "" + ID;
     ID += 1;
-    var RADIUS = 100;
+
     rElem.radius = RADIUS;
+
     var start = function () {
         this.ox = this.attr("cx");
         this.oy = this.attr("cy");
@@ -114,6 +99,16 @@ function addSendCoordListener(rElem) {
     };
 
     paper.set(rElem).drag(move, start, up);
+
+    c1 += 40;
+    c2 += 40;
+    return rElem;
+};
+
+// adds Raphael specific attributes to the raphael element
+var ID = 0;
+function addSendCoordListener(rElem) {
+
     return rElem;
 };
 
@@ -128,7 +123,6 @@ var START = function () {
             if (w.readyState == 1){
                 chuckMakeInst("SinOsc", e.node.id);
             };
-
         }
     }
 };

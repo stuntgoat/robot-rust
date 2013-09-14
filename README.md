@@ -13,8 +13,10 @@ Here's a demo video wherein we send some OSC messages to an example Chuck script
 Here's a demo video wherein there are a pair of independent oscillators per circle instrument:
 [https://www.dropbox.com/s/ftf6k8dcz767uwx/circles_demo_independent_pairs.mov](https://www.dropbox.com/s/ftf6k8dcz767uwx/circles_demo_independent_pairs.mov)
 
-`Demo` (requires Mac OS)
-========================
+`Demo`
+======
+
+This demo requires Mac OS, unless you want to build the Go demo_server from source.
 
 To play with the demo you will have to do several steps after cloning this repo.
 

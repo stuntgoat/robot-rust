@@ -59,6 +59,7 @@ fun void SinOsc_listen_f_f(OscRecv receiver, string address)
       // gets the data in the order specified by the receive event
       x => ugenX.freq;
       y => ugenY.freq;
+      <<<"sent to oscaddress", OSCAddress>>>;
     }
   }
 }

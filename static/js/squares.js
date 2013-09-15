@@ -19,33 +19,27 @@ var c2 = 100;
 
 
 function createSquare(length, angle) {
-function getRelCoords(event) {
-    mx = event.pageX;
-    my = event.pageY;
-    console.log('mx', mx);
-    console.log('my', my);
-    console.log('angle', event.target.data('angle'));
+    var rElem = paper.rect(c1, c2, length, length).attr({fill: "hsb(0, 1, 1)", stroke: "none", opacity: .5});;
 
-    ex = event.target.getBBox(true).x;
-    ey = event.target.getBBox(true).y;
-    console.log('ex', ex);
-    console.log('ey', ey);
+    // callback for mouse move
+    function getRelCoords(event) {
+        mx = event.pageX;
+        my = event.pageY;
+        console.log('mx', mx);
+        console.log('my', my);
+        console.log('angle', rElem.data('angle'));
 
+        ex = rElem.matrix.x(rElem.attrs.x, rElem.attrs.y);
+        ey = rElem.matrix.y(rElem.attrs.x, rElem.attrs.y);
 
-    // var r = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-    // var ang = Math.atan2(dy,dx);
-    // ang = ang - this.angle * (Math.PI / 180);
+        console.log('ex', ex);
+        console.log('ey', ey);
+    };
 
-    // dx = r * Math.cos(ang);
-    // dy = r * Math.sin(ang);
-
-    // var att = this.type == "rect" ? { x: this.ox + dx, y: this.oy + dy} : { cx: this.ox + dx, cy: this.oy + dy };
-    // this.attr(att);
-};
     if (angle == undefined) {
         angle = 0;
     };
-    var rElem = paper.rect(c1, c2, length, length).attr({fill: "hsb(0, 1, 1)", stroke: "none", opacity: .5});;
+
     rElem.attr("fill", "#504");
 
     rElem.node.id = "" + SQUARE_ID;

@@ -18,8 +18,8 @@ var c1 = 100;
 var c2 = 100;
 
 
-function createSquare(length, angle) {
-    var rElem = paper.rect(c1, c2, length, length).attr({fill: "hsb(0, 1, 1)", stroke: "none", opacity: .5});;
+function createSquare(width, height, angle) {
+    var rElem = paper.rect(c1, c2, width, height).attr({fill: "hsb(0, 1, 1)", stroke: "none", opacity: .5});;
 
     // callback for mouse move
     function getRelCoords(event) {
@@ -29,11 +29,44 @@ function createSquare(length, angle) {
         console.log('my', my);
         console.log('angle', rElem.data('angle'));
 
-        ex = rElem.matrix.x(rElem.attrs.x, rElem.attrs.y);
-        ey = rElem.matrix.y(rElem.attrs.x, rElem.attrs.y);
+        oldTLx = rElem.attrs.x;
+        oldTLy = rElem.attrs.y;
 
-        console.log('ex', ex);
-        console.log('ey', ey);
+        newTLx = rElem.matrix.x(oldTLx, oldTLy);
+        newTLy = rElem.matrix.y(oldTLx, oldTLy);
+
+        console.log('newTLx', newTLx);
+        console.log('newTLy', newTLy);
+
+        oldBRx = oldTLx;
+        oldBRy = oldTLy + height;
+
+        newBRx = rElem.matrix.x(oldBRx, oldBRy);
+        newBRy = rElem.matrix.y(oldBRx, oldBRy);
+
+        console.log('newBRx', newBRx);
+        console.log('newBRy', newBRy);
+
+        // mx = mx - oldTLx;
+        // my = my - oldTLy;
+        // var r = Math.sqrt(Math.pow(mx, 2) + Math.pow(my, 2));
+        // var ang = Math.atan2(my, mx);
+        // ang = ang - angle * (Math.PI / 180);
+
+        // dx = r * Math.cos(ang);
+        // dy = r * Math.sin(ang);
+
+        inverse = rElem.matrix.invert();
+        rX = inverse.x(mx, my);
+        rY = inverse.y(mx, my);
+
+        dx = rX - oldTLx;
+        dy = rY - oldTLy;
+
+        console.log('dx', dx);
+        console.log('dy', dy);
+
+        console.log('');
     };
 
     if (angle == undefined) {
@@ -47,39 +80,24 @@ function createSquare(length, angle) {
 
     rElem.data('angle', angle);
     rElem.transform('r' + angle);
+
     var start = function () {
-        this.x = this.attr("x");
-        this.y = this.attr("y");
-        this.animate({opacity: .25}, 500, ">");
+        this.ox = this.attr("x");
+        this.oy = this.attr("y");
     };
 
     var move = function (dx, dy) {
-        console.log('moving');
-        this.attr({x: this.x + dx, y: this.y + dy});
+        var r = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+        var ang = Math.atan2(dy, dx);
+        ang = ang - angle * (Math.PI / 180);
+
+        dx = r * Math.cos(ang);
+        dy = r * Math.sin(ang);
+        this.attr({ x: this.ox + dx, y: this.oy + dy});
     };
 
     var up = function () {
     };
-
-    // var start = function () {
-    //     this.ox = this.type == "rect" ? this.attr("x") : this.attr("cx");
-    //     this.oy = this.type == "rect" ? this.attr("y") : this.attr("cy");
-    // };
-
-    // var move = function (dx, dy) {
-    //     var r = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-    //     var ang = Math.atan2(dy,dx);
-    //     ang = ang - this.angle * (Math.PI / 180);
-
-    //     dx = r * Math.cos(ang);
-    //     dy = r * Math.sin(ang);
-
-    //     var att = this.type == "rect" ? { x: this.ox + dx, y: this.oy + dy} : { cx: this.ox + dx, cy: this.oy + dy };
-    //     this.attr(att);
-    // };
-
-    // var up = function () {
-    // };
 
 
     paper.set(rElem).drag(move, start, up);

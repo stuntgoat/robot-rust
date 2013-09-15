@@ -1,22 +1,25 @@
+
+
 var w = new WebSocket("ws://127.0.0.1:9000/ws");
 
-var LOGGING = false;
-
-
-
+var LOGGING = true;
 
 var paper = Raphael(0, 0, "100%", "100%");
 paper.canvas.onmousemove = function (event) {
-    console.log('mx my', event.pageX, event.pageY);
+    // console.log('mx my', event.pageX, event.pageY);
 };
 
-var INSTRUMENTS = [];
+// holds all the squares
+var SQUARES = [];
 
-// creates a square; adds Raphael specific attributes to the raphael element
+// base initial location coordinates, and id for elements
 var SQUARE_ID = 10;
 var c1 = 100;
 var c2 = 100;
 
+function relativePercentage(value, total) {
+    return Math.abs(value / total);
+};
 
 function createSquare(width, height, angle) {
     var rElem = paper.rect(c1, c2, width, height).attr({fill: "hsb(0, 1, 1)", stroke: "none", opacity: .5});;
@@ -25,36 +28,8 @@ function createSquare(width, height, angle) {
     function getRelCoords(event) {
         mx = event.pageX;
         my = event.pageY;
-        console.log('mx', mx);
-        console.log('my', my);
-        console.log('angle', rElem.data('angle'));
-
         oldTLx = rElem.attrs.x;
         oldTLy = rElem.attrs.y;
-
-        newTLx = rElem.matrix.x(oldTLx, oldTLy);
-        newTLy = rElem.matrix.y(oldTLx, oldTLy);
-
-        console.log('newTLx', newTLx);
-        console.log('newTLy', newTLy);
-
-        oldBRx = oldTLx;
-        oldBRy = oldTLy + height;
-
-        newBRx = rElem.matrix.x(oldBRx, oldBRy);
-        newBRy = rElem.matrix.y(oldBRx, oldBRy);
-
-        console.log('newBRx', newBRx);
-        console.log('newBRy', newBRy);
-
-        // mx = mx - oldTLx;
-        // my = my - oldTLy;
-        // var r = Math.sqrt(Math.pow(mx, 2) + Math.pow(my, 2));
-        // var ang = Math.atan2(my, mx);
-        // ang = ang - angle * (Math.PI / 180);
-
-        // dx = r * Math.cos(ang);
-        // dy = r * Math.sin(ang);
 
         inverse = rElem.matrix.invert();
         rX = inverse.x(mx, my);
@@ -63,67 +38,49 @@ function createSquare(width, height, angle) {
         dx = rX - oldTLx;
         dy = rY - oldTLy;
 
-        console.log('dx', dx);
-        console.log('dy', dy);
+        if (LOGGING) {
+            console.log('dx', relativePercentage(dx, width));
+            console.log('dy', relativePercentage(dy, height));
+        };
+    }
 
-        console.log('');
-    };
-
-    if (angle == undefined) {
-        angle = 0;
-    };
-
+    // color
     rElem.attr("fill", "#504");
 
+    // set id and increment base value
     rElem.node.id = "" + SQUARE_ID;
     SQUARE_ID += 1;
 
+    // set initial rotation
+    if (angle == undefined) {
+        angle = 0;
+    };
     rElem.data('angle', angle);
-    rElem.transform('r' + angle);
+    rElem.mousemove(getRelCoords);
 
-    var start = function () {
-        this.ox = this.attr("x");
-        this.oy = this.attr("y");
-    };
+    var ft = paper.freeTransform(rElem);
 
-    var move = function (dx, dy) {
-        var r = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-        var ang = Math.atan2(dy, dx);
-        ang = ang - angle * (Math.PI / 180);
-
-        dx = r * Math.cos(ang);
-        dy = r * Math.sin(ang);
-        this.attr({ x: this.ox + dx, y: this.oy + dy});
-    };
-
-    var up = function () {
-    };
-
-
-    paper.set(rElem).drag(move, start, up);
+    ft.attrs.rotate = angle;
+    ft.setOpts({'scale': false});
+    ft.apply();
 
     c1 += 40;
     c2 += 40;
 
-    // rElem.mousemove(function (event){console.log(event.target);});
-    rElem.mousemove(getRelCoords);
-    rElem.click(whereIsXY);
 
-    return rElem;
+
+    return ft;
 };
 
-function whereIsXY(event) {
-    console.log('event', event.target);
-};
 
-var is = [];
 // create an arbitrary number of circles for this demo
 var START = function () {
     if (w.readyState == 1) {
         for (var i=0; i < 8; i++) {
-            createSquare(100);
+            var s = createSquare(100);
+            SQUARES.push(s);
         }
     }
 };
 
-// send a message to Chuck to create an instrument with this id
+var b = createSquare(100, 100, 45);

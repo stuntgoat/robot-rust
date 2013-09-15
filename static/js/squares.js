@@ -1,4 +1,4 @@
-
+var DEFAULT_GAIN_ON = .2;
 
 var w = new WebSocket("ws://127.0.0.1:9000/ws");
 
@@ -37,6 +37,16 @@ function createSquare(width, height, angle) {
 
         dx = rX - oldTLx;
         dy = rY - oldTLy;
+
+        var m = new OSCMessage();
+        m.address = "/" + rElem.node.id;
+        m.addFloat(dx);
+        m.addFloat(dy);
+        m.addFloat(DEFAULT_GAIN_ON);
+        w.send(m.getString());
+        if (LOGGING) {
+            console.log(m.address, coords);
+        };
 
         if (LOGGING) {
             console.log('dx', relativePercentage(dx, width));

@@ -1,4 +1,5 @@
 // Copied from http://chuck.cs.princeton.edu/doc/examples/osc/r.ck
+float DEFAULT_GAIN_ON;
 
 fun OscRecv MakeReceiver(int port)
 {
@@ -29,10 +30,18 @@ fun string BuildOSCAddress(string path, int floats, int ints, int strings)
   return OSCAddress;
 }
 
-// TODO: - add max, min, gain,
-fun void SinOsc_listen_f_f(OscRecv receiver, string address)
+fun float Freq_From_Float_min_max(float value, int min, int max)
 {
-  BuildOSCAddress(address, 2, 0, 0) => string OSCAddress;
+  // max - min = range
+
+  // return (range * value) + min
+}
+
+// TODO: - add max, min, gain,
+fun void SinOsc_listen_f_f(OscRecv receiver, string address, int min, int max)
+{
+  // build address that accepts 3 floats(freq1, freq2, gain)
+  BuildOSCAddress(address, 3, 0, 0) => string OSCAddress;
   <<<"oscaddress", OSCAddress>>>;
   receiver.event(OSCAddress) @=> OscEvent @ oe;
 
@@ -42,7 +51,7 @@ fun void SinOsc_listen_f_f(OscRecv receiver, string address)
   SinOsc ugenY => dac;
   .2 => ugenY.gain;
 
-
+  float gain;
   // infinite event loop
   while (true) {
     // wait for event to arrive
@@ -52,13 +61,22 @@ fun void SinOsc_listen_f_f(OscRecv receiver, string address)
     while (oe.nextMsg()) {
       float x;
       float y;
+      float newGain;
       oe.getFloat() => x;
       oe.getFloat() => y;
+      oe.getFloat() => newGain;
       <<<"x", x>>>;
       <<<"y", y>>>;
       // gets the data in the order specified by the receive event
+
       x => ugenX.freq;
       y => ugenY.freq;
+      if (newGain != gain) {
+        <<<"setting gain:", newGain>>>;
+        gain => ugenX.gain;
+        gain => ugenY.gain;
+      }
+
       <<<"sent to oscaddress", OSCAddress>>>;
     }
   }
@@ -96,9 +114,9 @@ fun void CreateInstrumentListener(string createInstrumentAddress, int port)
       <<<"sendAddress", sendAddress>>>;
       // TODO: abstract creation of instruments
       if (instrumentName == "SinOsc") {
-        if ((floats == 2) && (ints == 0) && (strings == 0)) {
+        if ((floats == 2) && (ints == 2) && (strings == 0)) {
           <<<"Sporking shred",  sendAddress, receiver>>>;
-          spork ~ SinOsc_listen_f_f(receiver, sendAddress);
+          spork ~ SinOsc_listen_f_f(receiver, sendAddress, min, max);
         }
       }
     }

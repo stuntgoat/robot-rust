@@ -1,5 +1,3 @@
-var DEFAULT_GAIN_ON = .2;
-
 // holds all the squares
 var SQUARES = [];
 

@@ -1,4 +1,5 @@
 // holds objects and functions common to different shapes
+var DEFAULT_GAIN_ON = .2;
 
 var LOGGING = false;
 
@@ -28,17 +29,21 @@ paper.canvas.onmousemove = function (event) {
 	    }
 	};
     };
-    var _x = event.offsetX;
-    var _y = event.offsetY;
 
     var j = CIRCLES.length;
     while (j--) {
-        var radius = CIRCLES[i].attrs.r;
+        var radius = CIRCLES[j].attrs.r;
         var cx = CIRCLES[j].attrs.cx;
         var cy = CIRCLES[j].attrs.cy;
-        var dist = distBetween(_x, _y, x, y);
+        var dist = distBetween(event.pageX, event.pageY, cx, cy);
         if ( dist <= radius) {
-	    sendOCSCoords(CIRCLES[j]
+	    var TLx = cx - radius;
+	    var TLy = cy - radius;
+	    
+	    var rx = relativePercentage(event.pageX - TLx, radius * 2);
+	    var ry = relativePercentage(event.pageY - TLy, radius * 2);
+	    sendOSCCoords(CIRCLES[j], rx, ry);
+	    SILENCED_CIRCLES[j] = false;
         } else {
 	    if (SILENCED_CIRCLES[j]) {
 		continue;
@@ -53,20 +58,9 @@ paper.canvas.onmousemove = function (event) {
     }
 };
 
-function sendOSCCoords(rElem, mx, my) {
-
-
-            var pos = relPosition(_x, _y, x, y, radius);
-            sendOCSCoords(pos, CIRCLES[i].node.id);
-
-    var m = new OSCMessage();
-    m.address = "/" + address;
-    m.addFloat(coords.x * 2.1);
-    m.addFloat(coords.y * 2.6); // should always be < 1
-    w.send(m.getString());
-    if (LOGGING) {
-        console.log(m.address, coords);
-    };
+function sendOSCCoords(rElem, x, y) {
+    var address = "/" + rElem.node.id;
+    sendMessage(address, x, y, DEFAULT_GAIN_ON, "on");
 }
 
 
@@ -129,13 +123,13 @@ var chuckMakeInst = function(instrument, id, min, max) {
 function addRect(width, height, min, max, instrumentName) {
     var s = createSquare(width, height);
     chuckMakeInst(instrumentName, s.node.id, min, max);
-    SQUARES.push(s);    
+    SQUARES.push(s);
 };
 
 function addCircle(radius, min, max, instrumentName) {
     var c = createCircle(radius);
     chuckMakeInst(instrumentName, c.node.id, min, max);
-    CIRCLES.push(c);    
+    CIRCLES.push(c);
 };
 
 // create an arbitrary number of circles for this demo
@@ -144,8 +138,8 @@ var START = function () {
         for (var i=0; i < 2; i++) {
 	    addRect(200, 200, 1, 500, 'SinOsc');
         }
-        for (var j=0; i < 2; i++) {
-	    
+        for (var j=0; j < 2; j++) {
+	    addCircle(200, 1, 500, 'SinOsc');
         }
     }
 };
@@ -159,12 +153,4 @@ var distBetween = function(x1, y1, x2, y2) {
     var dx = Math.abs(x1 - x2);
     var dy = Math.abs(y1 - y2);
     return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-};
-
-// ARGUMENTS: mouse x, mouse y, element x, element y, radius
-// send the x, y coordinates relative to the top left corner of
-// the objects bounding box.
-var relPosition = function(mX, mY, ex, ey, r) {
-    var topLeft = {x: ex - r, y: ey - r};
-    return {x: mX - topLeft.x, y: mY - topLeft.y};
 };

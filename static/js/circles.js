@@ -23,7 +23,7 @@ function createCircle(radius) {
     };
 
     var up = function () {
-        this.animate({r: RADIUS, opacity: .5}, 500, ">");
+        this.animate({opacity: .5}, 500, ">");
         this.center = {x: this.data("cx"), y: this.data("cy")};
     };
 

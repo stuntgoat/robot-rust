@@ -15,9 +15,9 @@ fun void TurnItDown(UGen ug)
   }
 
   while (current > 0) {
-    .01 -=> current;
+    .001 -=> current;
     current => ug.gain;
-    2::samp => now;
+    1::samp => now;
   }
 }
 
@@ -27,9 +27,9 @@ fun void TurnItUp(UGen ug, float level)
 {
   ug.gain() @=> float current;
   while (current < level) {
-    .01 +=> current;
+    .001 +=> current;
     current => ug.gain;
-    2::samp => now;
+    1::samp => now;
   }
 }
 
@@ -94,6 +94,7 @@ fun void SinOsc_listen(OscRecv receiver, string address, float min, float max)
       oe.getFloat() => y;
       oe.getFloat() => newGain;
       oe.getString() => msg;
+
       if (msg == "off") {
         break;
       }
@@ -102,13 +103,14 @@ fun void SinOsc_listen(OscRecv receiver, string address, float min, float max)
 	TurnItDown(ugenY);
         continue;
       }
+
       (x * range) + min => ugenX.freq;
       (y * range) + min => ugenY.freq;
 
       ugenY.gain() => float oldGain;
       if (newGain != oldGain) {
 	TurnItUp(ugenX, newGain);
-	TurnItUp(ugenX, newGain);
+	TurnItUp(ugenY, newGain);
       }
     }
   }

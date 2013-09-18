@@ -1,4 +1,5 @@
-1 @=> int LOGGING;
+// logging off by default
+0 @=> int LOGGING;
 .2  @=> float DEFAULT_GAIN_ON;
 
 // Slowly turn the gain down to avoid clicking sounds on the dac
@@ -67,7 +68,9 @@ fun void SinOsc_listen(OscRecv receiver, string address, float min, float max)
 {
   // build address that accepts 3 floats(freq1, freq2, gain)
   BuildOSCAddress(address, 3, 0, 1) => string OSCAddress;
-  <<<"oscaddress", OSCAddress>>>;
+  if (LOGGING) {
+    <<<"oscaddress", OSCAddress>>>;
+  }
 
   receiver.event(OSCAddress) @=> OscEvent @ oe;
 
@@ -136,7 +139,9 @@ fun void CreateInstrumentListener(string createInstrumentAddress, int port)
   receiver.listen();
 
   BuildOSCAddress(createInstrumentAddress, 2, 0, 2) => string OSCAddress;
-  <<<"building osc address for control messages", OSCAddress>>>;
+  if (LOGGING) {
+    <<<"building osc address for control messages", OSCAddress>>>;
+  }
   receiver.event(OSCAddress) @=> OscEvent @ osce;
 
 
@@ -153,11 +158,15 @@ fun void CreateInstrumentListener(string createInstrumentAddress, int port)
       osce.getFloat() => max;
       osce.getString() => instrumentName;
       osce.getString() => sendAddress;
-      <<<"instrument name:", instrumentName>>>;
-      <<<"sendAddress", sendAddress>>>;
+      if (LOGGING) {
+	<<<"instrument name:", instrumentName>>>;
+	<<<"sendAddress", sendAddress>>>;
+      }
       // TODO: abstract creation of instruments
       if (instrumentName == "SinOsc") {
-        <<<"Sporking shred",  sendAddress, receiver>>>;
+	if (LOGGING) {
+	  <<<"Sporking shred",  sendAddress, receiver>>>;
+	}
         spork ~ SinOsc_listen(receiver, sendAddress, min, max);
       }
     }

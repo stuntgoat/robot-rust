@@ -1,3 +1,5 @@
+
+
 // holds objects and functions common to different shapes
 var DEFAULT_GAIN_ON = .2;
 
@@ -63,7 +65,9 @@ paper.canvas.onmousemove = function (event) {
 	    }
         } else {
 	    if (SILENCED_CIRCLES[j]) {
-		console.log('circles are silenced');
+		if (LOGGING)  {
+		    console.log('circles are silenced');		    
+		}
 		continue;
 	    } else {
 		// JANK!!
@@ -72,7 +76,7 @@ paper.canvas.onmousemove = function (event) {
 		silenceInstrument("/" + CIRCLES[j].node.id);
 		SILENCED_CIRCLES[j] = true;
 		if (LOGGING) {
-		console.log('setting silenced to true');
+		    console.log('setting silenced to true');
 		};
 
 	    }
@@ -85,9 +89,8 @@ function sendOSCCoords(rElem, x, y) {
     sendMessage(address, x, y, DEFAULT_GAIN_ON, "on");
 }
 
-
+// TODO: - name appropriately
 function getRelCoords(rElem, mx, my) {
-    console.log('getRelCoords', rElem);
     var oldTLx = null;
     var oldTLy = null;
     var type = rElem.type;
@@ -117,7 +120,6 @@ function getRelCoords(rElem, mx, my) {
     }
 
     var address = "/" + rElem.node.id;
-    
     sendMessage(address, x, y, DEFAULT_GAIN_ON, "on");
 
     if (LOGGING) {
@@ -184,6 +186,7 @@ var distBetween = function(x1, y1, x2, y2) {
     return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 };
 
+// TODO: - create random address for each new shape
 // create an arbitrary number of circles for this demo
 var START = function () {
     if (w.readyState == 1) {

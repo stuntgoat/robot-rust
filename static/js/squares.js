@@ -8,16 +8,12 @@ var c2 = 100;
 
 function createSquare(width, height, angle) {
     var rElem = paper.rect(c1, c2, width, height).attr({fill: "hsb(0, 1, 1)", stroke: "none", opacity: .5});;
-    var address = '';
+    var address = "/" + SQUARE_ID;
+    rElem.node.id = "" + SQUARE_ID;
+    SQUARE_ID += 1;
 
-    // callback for mouse move
     // color
     rElem.attr("fill", "#504");
-
-    // set id and increment base value
-    rElem.node.id = "" + SQUARE_ID;
-    address = "/" + SQUARE_ID;
-    SQUARE_ID += 1;
 
     // set initial rotation
     if (angle == undefined) {
@@ -37,9 +33,3 @@ function createSquare(width, height, angle) {
     
     return rElem;
 };
-
-
-// audio prefs: IN: line in OUT: headphones
-// soundflower: soundflower 2ch : builtin output - selecte use this device for sound input
-
-

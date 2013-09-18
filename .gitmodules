@@ -1,0 +1,9 @@
+[submodule "static/js/raphael"]
+	path = static/js/raphael
+	url = git@github.com:DmitryBaranovskiy/raphael.git
+[submodule "static/js/Raphael.FreeTransform"]
+	path = static/js/Raphael.FreeTransform
+	url = git@github.com:ElbertF/Raphael.FreeTransform.git
+[submodule "static/js/jsox"]
+	path = static/js/jsox
+	url = git@github.com:aturley/jsox.git

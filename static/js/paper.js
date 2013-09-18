@@ -188,7 +188,7 @@ var distBetween = function(x1, y1, x2, y2) {
 
 // TODO: - create random address for each new shape
 // create an arbitrary number of circles for this demo
-var START = function () {
+START = function () {
     if (w.readyState == 1) {
         for (var i=0; i < 2; i++) {
 	    addRect(100, 200, 1, 800, 'SinOsc');

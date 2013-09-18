@@ -5,7 +5,7 @@ This is a collection of scripts that is used for creating arbitrary user interfa
 
 This project is using code from the following projects:<br>
 [http://raphaeljs.com/](http://raphaeljs.com/)<br>
-[https://github.com/ElbertF/Raphael.FreeTransform](https://github.com/ElbertF/Raphael.FreeTransform)
+[https://github.com/ElbertF/Raphael.FreeTransform](https://github.com/ElbertF/Raphael.FreeTransform)<br>
 [https://github.com/aturley/jsox](https://github.com/aturley/jsox)<br>
 
 Here's a demo video wherein there are a pair of independent oscillators per circle and square instruments:

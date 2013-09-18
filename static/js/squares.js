@@ -2,15 +2,15 @@
 var SQUARES = [];
 
 // base initial location coordinates, and id for elements
-var SQUARE_ID = 10;
-var c1 = 100;
-var c2 = 100;
+var _square_id = 10;
+var c1 = 200;
+var c2 = 300;
 
 function createSquare(width, height, angle) {
     var rElem = paper.rect(c1, c2, width, height).attr({fill: "hsb(0, 1, 1)", stroke: "none", opacity: .5});;
-    var address = "/" + SQUARE_ID;
-    rElem.node.id = "" + SQUARE_ID;
-    SQUARE_ID += 1;
+    var address = "/" + _square_id;
+    rElem.node.id = "" + _square_id;
+    _square_id += 1;
 
     // color
     rElem.attr("fill", "#504");

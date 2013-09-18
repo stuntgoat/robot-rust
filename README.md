@@ -1,22 +1,20 @@
 `robot-rust`
 ==========
 
-This is a collection of scripts that is used for creating arbitrary user interfaces for sending OSC data. Currently we can overlap shapes to send data for each shape when the mouse is over 2 or more shapes at the same time.
+This is a collection of scripts that is used for creating arbitrary user interfaces for sending OSC data via the browser. Currently we can overlap shapes to send data for each shape when the mouse is over 2 or more shapes at the same time, where 'shapes' are either a square or a circle. 
 
 This project is using code from the following projects:<br>
 [http://raphaeljs.com/](http://raphaeljs.com/)<br>
+[https://github.com/ElbertF/Raphael.FreeTransform](https://github.com/ElbertF/Raphael.FreeTransform)
 [https://github.com/aturley/jsox](https://github.com/aturley/jsox)<br>
 
-Here's a demo video wherein we send some OSC messages to an example Chuck script that has a reverb filter and an oscillator that are listening for OSC messages to change their settings: [https://www.dropbox.com/s/h7a4sskjd7zojx8/circles_demo.mov](https://www.dropbox.com/s/h7a4sskjd7zojx8/circles_demo.mov)
-
-
-Here's a demo video wherein there are a pair of independent oscillators per circle instrument:
-[https://www.dropbox.com/s/ftf6k8dcz767uwx/circles_demo_independent_pairs.mov](https://www.dropbox.com/s/ftf6k8dcz767uwx/circles_demo_independent_pairs.mov)
+Here's a demo video wherein there are a pair of independent oscillators per circle and square instruments:
+[https://www.dropbox.com/s/shdd0vplijgp4v1/rotating_circles_squares.mov](https://www.dropbox.com/s/shdd0vplijgp4v1/rotating_circles_squares.mov)
 
 `Demo`
 ======
 
-This demo requires Mac OS, unless you want to build the Go demo_server from source.
+This demo requires Mac OS, unless you want to build the Go demo_server from source on another platform. 
 
 To play with the demo you will have to do several steps after cloning this repo.
 
@@ -43,6 +41,7 @@ To play with the demo you will have to do several steps after cloning this repo.
 `todo:`
 ====
 
-    - make squares
-    - resize elements by dragging
-    - rotate shapes and send the relative coordinates
+	- Go websocket server should destroy all Chuck instruments on socket close
+	- implement Path.js @ https://github.com/lemonzi/path.js for sequencing movement
+	- more instruments and effects
+	- use control messages to the Go server to establish new OSC connections.

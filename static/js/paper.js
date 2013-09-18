@@ -52,39 +52,11 @@ paper.canvas.onmousemove = function (event) {
 
         if ( dist <= radius) {
 	    if (LOGGING) {
-		console.log('mouse coords less than radius from center of circle', j);
+		console.log('mouse less than radius from center of circle', j);
 	    }
-	    // var TLx = cx - radius;
-	    // var TLy = cy - radius;
 	    mx = event.pageX;
 	    my = event.pageY;
-
-	    _x = CIRCLES[j].data('_x');
-	    _y = CIRCLES[j].data('_y');
-	    console.log('_x', _x);
-	    console.log('_y', _y);
-	    console.log('mx', mx);
-	    console.log('my', my);
-
-	    var TLx = CIRCLES[j].matrix.x(_x, _y);
-	    var TLy = CIRCLES[j].matrix.y(_x, _y);
-	    if (LOGGING) {
-		console.log('TLx', TLx);
-		console.log('TLy', TLy);
-	    }
-
-	    var inverse = CIRCLES[j].matrix.invert();
-	    var rX = inverse.x(event.pageX, event.pageY);
-	    var rY = inverse.y(event.pageX, event.pageY);
-	    
-	    var dx = rX - _x;
-	    var dy = rY - _y;
-
-	    var rx = relativePercentage(dx, radius * 2);
-	    var ry = relativePercentage(dy, radius * 2);
-	    console.log('rx', rx);
-	    console.log('ry', ry);
-	    sendOSCCoords(CIRCLES[j], rx, ry);
+	    getRelCoords(CIRCLES[j], mx, my);
 	    SILENCED_CIRCLES[j] = false;
 	    if (LOGGING) {
 		console.log('setting silenced to false');
@@ -118,12 +90,14 @@ function getRelCoords(rElem, mx, my) {
     console.log('getRelCoords', rElem);
     var oldTLx = null;
     var oldTLy = null;
+    var type = rElem.type;
+    var x;
+    var y;
 
-    if (rElem.type == 'circle') {
-	oldTLx = CIRCLES[j].data('_x');
-	oldTLy = CIRCLES[j].data('_y');
-	
-    } else if (rElem.type == 'rect') {
+    if (type == 'circle') {
+	oldTLx = rElem.data('_x');
+	oldTLy = rElem.data('_y');
+    } else if (type == 'rect') {
 	oldTLx = rElem.attrs.x;
 	oldTLy = rElem.attrs.y;
     }
@@ -134,8 +108,14 @@ function getRelCoords(rElem, mx, my) {
 
     var dx = rX - oldTLx;
     var dy = rY - oldTLy;
-    var x = relativePercentage(dx, rElem.attrs.width);
-    var y = relativePercentage(dy, rElem.attrs.height);
+    if (type == 'rect') {
+	x = relativePercentage(dx, rElem.attrs.width);
+	y = relativePercentage(dy, rElem.attrs.height);	
+    } else if (type == 'circle') {
+	x = relativePercentage(dx, rElem.attrs.r * 2);
+	y = relativePercentage(dy, rElem.attrs.r * 2);	
+    }
+
     var address = "/" + rElem.node.id;
     
     sendMessage(address, x, y, DEFAULT_GAIN_ON, "on");
@@ -207,11 +187,11 @@ var distBetween = function(x1, y1, x2, y2) {
 // create an arbitrary number of circles for this demo
 var START = function () {
     if (w.readyState == 1) {
-        for (var i=0; i < 0; i++) {
-	    addRect(100, 200, 1, 500, 'SinOsc');
+        for (var i=0; i < 2; i++) {
+	    addRect(100, 200, 1, 800, 'SinOsc');
         }
-        for (var j=0; j < 1; j++) {
-	    addCircle(50, 1, 500, 'SinOsc');
+        for (var j=0; j < 2; j++) {
+	    addCircle(57, 1, 800, 'SinOsc');
         }
     }
 };

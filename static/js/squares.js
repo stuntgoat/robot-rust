@@ -23,7 +23,6 @@ function createSquare(width, height, angle) {
     if (angle == undefined) {
         angle = 0;
     };
-    rElem.data('angle', angle);
 
     var ft = paper.freeTransform(rElem);
     ft.attrs.rotate = angle;
@@ -38,5 +37,9 @@ function createSquare(width, height, angle) {
     
     return rElem;
 };
+
+
+// audio prefs: IN: line in OUT: headphones
+// soundflower: soundflower 2ch : builtin output - selecte use this device for sound input
 
 

@@ -1,4 +1,4 @@
-
+1 @=> int LOGGING;
 .2  @=> float DEFAULT_GAIN_ON;
 
 // Slowly turn the gain down to avoid clicking sounds on the dac
@@ -86,6 +86,10 @@ fun void SinOsc_listen(OscRecv receiver, string address, float min, float max)
 
     // grab the next message from the queue.
     while (oe.nextMsg()) {
+      if (LOGGING) {
+	<<<"Receiving OSC message on address:", OSCAddress>>>;
+	
+      }
       float x;
       float y;
       float newGain;
@@ -94,6 +98,12 @@ fun void SinOsc_listen(OscRecv receiver, string address, float min, float max)
       oe.getFloat() => y;
       oe.getFloat() => newGain;
       oe.getString() => msg;
+      if (LOGGING) {
+	<<<"x", x>>>;
+	<<<"y", y>>>;
+	<<<"newGain", newGain>>>;
+	<<<"newGain", msg>>>;
+      }
 
       if (msg == "off") {
         break;

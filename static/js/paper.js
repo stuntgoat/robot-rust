@@ -32,20 +32,66 @@ paper.canvas.onmousemove = function (event) {
 
     var j = CIRCLES.length;
     while (j--) {
+	if (LOGGING) {
+	    console.log(CIRCLES[j].attrs, 'attrs');
+	};
         var radius = CIRCLES[j].attrs.r;
-        var cx = CIRCLES[j].attrs.cx;
-        var cy = CIRCLES[j].attrs.cy;
+	var x = CIRCLES[j].attrs.cx;
+	var y = CIRCLES[j].attrs.cy;
+
+        var cx = CIRCLES[j].matrix.x(x, y);
+        var cy = CIRCLES[j].matrix.y(x, y);
         var dist = distBetween(event.pageX, event.pageY, cx, cy);
+	if (LOGGING) {
+	    console.log('x', x);
+	    console.log('y', y);
+	    console.log('cx', cx);
+	    console.log('cy', cy);
+	    console.log('dist', dist);
+	}
+
         if ( dist <= radius) {
-	    var TLx = cx - radius;
-	    var TLy = cy - radius;
+	    if (LOGGING) {
+		console.log('mouse coords less than radius from center of circle', j);
+	    }
+	    // var TLx = cx - radius;
+	    // var TLy = cy - radius;
+	    mx = event.pageX;
+	    my = event.pageY;
+
+	    _x = CIRCLES[j].data('_x');
+	    _y = CIRCLES[j].data('_y');
+	    console.log('_x', _x);
+	    console.log('_y', _y);
+	    console.log('mx', mx);
+	    console.log('my', my);
+
+	    var TLx = CIRCLES[j].matrix.x(_x, _y);
+	    var TLy = CIRCLES[j].matrix.y(_x, _y);
+	    if (LOGGING) {
+		console.log('TLx', TLx);
+		console.log('TLy', TLy);
+	    }
+
+	    var inverse = CIRCLES[j].matrix.invert();
+	    var rX = inverse.x(event.pageX, event.pageY);
+	    var rY = inverse.y(event.pageX, event.pageY);
 	    
-	    var rx = relativePercentage(event.pageX - TLx, radius * 2);
-	    var ry = relativePercentage(event.pageY - TLy, radius * 2);
+	    var dx = rX - _x;
+	    var dy = rY - _y;
+
+	    var rx = relativePercentage(dx, radius * 2);
+	    var ry = relativePercentage(dy, radius * 2);
+	    console.log('rx', rx);
+	    console.log('ry', ry);
 	    sendOSCCoords(CIRCLES[j], rx, ry);
 	    SILENCED_CIRCLES[j] = false;
+	    if (LOGGING) {
+		console.log('setting silenced to false');
+	    }
         } else {
 	    if (SILENCED_CIRCLES[j]) {
+		console.log('circles are silenced');
 		continue;
 	    } else {
 		// JANK!!
@@ -53,6 +99,10 @@ paper.canvas.onmousemove = function (event) {
 		silenceInstrument("/" + CIRCLES[j].node.id);
 		silenceInstrument("/" + CIRCLES[j].node.id);
 		SILENCED_CIRCLES[j] = true;
+		if (LOGGING) {
+		console.log('setting silenced to true');
+		};
+
 	    }
 	}
     }
@@ -65,8 +115,18 @@ function sendOSCCoords(rElem, x, y) {
 
 
 function getRelCoords(rElem, mx, my) {
-    var oldTLx = rElem.attrs.x;
-    var oldTLy = rElem.attrs.y;
+    console.log('getRelCoords', rElem);
+    var oldTLx = null;
+    var oldTLy = null;
+
+    if (rElem.type == 'circle') {
+	oldTLx = CIRCLES[j].data('_x');
+	oldTLy = CIRCLES[j].data('_y');
+	
+    } else if (rElem.type == 'rect') {
+	oldTLx = rElem.attrs.x;
+	oldTLy = rElem.attrs.y;
+    }
 
     var inverse = rElem.matrix.invert();
     var rX = inverse.x(mx, my);
@@ -132,17 +192,6 @@ function addCircle(radius, min, max, instrumentName) {
     CIRCLES.push(c);
 };
 
-// create an arbitrary number of circles for this demo
-var START = function () {
-    if (w.readyState == 1) {
-        for (var i=0; i < 2; i++) {
-	    addRect(200, 200, 1, 500, 'SinOsc');
-        }
-        for (var j=0; j < 2; j++) {
-	    addCircle(200, 1, 500, 'SinOsc');
-        }
-    }
-};
 
 function relativePercentage(value, total) {
     return Math.abs(value / total);
@@ -153,4 +202,16 @@ var distBetween = function(x1, y1, x2, y2) {
     var dx = Math.abs(x1 - x2);
     var dy = Math.abs(y1 - y2);
     return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+};
+
+// create an arbitrary number of circles for this demo
+var START = function () {
+    if (w.readyState == 1) {
+        for (var i=0; i < 0; i++) {
+	    addRect(100, 200, 1, 500, 'SinOsc');
+        }
+        for (var j=0; j < 1; j++) {
+	    addCircle(50, 1, 500, 'SinOsc');
+        }
+    }
 };

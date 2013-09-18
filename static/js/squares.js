@@ -4,7 +4,7 @@ var SQUARES = [];
 // base initial location coordinates, and id for elements
 var _square_id = 10;
 var c1 = 200;
-var c2 = 300;
+var c2 = 200;
 
 function createSquare(width, height, angle) {
     var rElem = paper.rect(c1, c2, width, height).attr({fill: "hsb(0, 1, 1)", stroke: "none", opacity: .5});;

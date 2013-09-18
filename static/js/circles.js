@@ -2,7 +2,7 @@ var CIRCLES = [];
 
 var _circle_id = 0;
 var _offsetx = 100;
-var _offsety = 200;
+var _offsety = 100;
 function createCircle(radius, angle) {
     var rElem = paper.circle(c1, c2, radius).attr({fill: "hsb(0, 1, 1)", stroke: "none", opacity: .5});
     rElem.attr("fill", "#504");

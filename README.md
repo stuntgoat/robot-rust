@@ -36,8 +36,6 @@ To play with the demo you will have to do several steps after cloning this repo.
 
 4) Navigate to [http://localhost:9000](http://localhost:9000).
 
-5) call 'START()' in the javascript console.
-
 When you mouse over the shapes, you should hear the pitch corresponding to the relative distance of the mouse from the x and y coordinates of the initial top left position of each shape. You should be able to move and rotate each shape.
 
 ----------------------
